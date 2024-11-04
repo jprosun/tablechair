@@ -52,7 +52,7 @@ namespace tablechair.UserControll
             dataGridView1.ReadOnly = true;
         }
 
-        private void LoadDataIntoDataGridView()
+        internal void LoadDataIntoDataGridView()
         {
             dataGridView1.Rows.Clear();
 
@@ -143,20 +143,22 @@ LEFT JOIN NuocSX ON DMHangHoa.MaNuocSX = NuocSX.MaNuocSX
 
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0)
+            if (e.RowIndex >= 0) // Kiểm tra hàng được chọn hợp lệ
             {
                 DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
-                selectedProductId = row.Cells["MaHang"].Value?.ToString();
-                txtTenSP.Text = row.Cells[1].Value?.ToString();
-                comboBoxChatLieu.Text = row.Cells[2].Value?.ToString();
-                comboBoxLoaiSp.Text = row.Cells[3].Value?.ToString();
-                comboBoxNSX.Text = row.Cells[4].Value?.ToString();
-                txtBaoHanh.Text = row.Cells[5].Value?.ToString();
-                txtGiaBan.Text = row.Cells[6].Value?.ToString();
-                txtGiaN.Text = row.Cells[7].Value?.ToString();
-                txtSoLuong.Text = row.Cells[8].Value?.ToString();
+                selectedProductId = row.Cells["MaHang"].Value?.ToString(); // Cập nhật MaHang vào selectedProductId
+                txtTenSP.Text = row.Cells["Tên Hàng Hóa"].Value?.ToString();
+                comboBoxChatLieu.Text = row.Cells["Chất Liệu"].Value?.ToString();
+                comboBoxLoaiSp.Text = row.Cells["Loại"].Value?.ToString();
+                comboBoxNSX.Text = row.Cells["Nước Sản Xuất"].Value?.ToString();
+                txtBaoHanh.Text = row.Cells["Thời Gian Bảo Hành"].Value?.ToString();
+                txtGiaBan.Text = row.Cells["Đơn Giá Bán"].Value?.ToString();
+                txtGiaN.Text = row.Cells["Đơn Giá Nhập"].Value?.ToString();
+                txtSoLuong.Text = row.Cells["Số Lượng"].Value?.ToString();
             }
         }
+
+
 
         private void gunaBtnThem_Click(object sender, EventArgs e)
         {
@@ -270,36 +272,74 @@ LEFT JOIN NuocSX ON DMHangHoa.MaNuocSX = NuocSX.MaNuocSX
 
         private void gunaBtnXoa_Click(object sender, EventArgs e)
         {
-            if (dataGridView1.SelectedRows.Count > 0)
-            {
-                string tenSP = dataGridView1.SelectedRows[0].Cells["Tên Hàng Hóa"].Value?.ToString();
-                DialogResult result = MessageBox.Show($"Bạn có chắc chắn muốn xóa sản phẩm: {tenSP}?", "Xác nhận xóa", MessageBoxButtons.YesNo);
-                if (result == DialogResult.Yes)
-                {
-                    string query = "UPDATE DMHangHoa SET IsDeleted = 1 WHERE TenHangHoa = @TenHangHoa";
-
-                    try
-                    {
-                        SqlParameter[] parameters = new SqlParameter[]
-                             {
-                                new SqlParameter("@TenHangHoa", tenSP)
-                             };
-                        DatabaseManager.Instance.ExecuteNonQuery(query, parameters);
-
-                        MessageBox.Show("Xóa sản phẩm thành công.");
-                        LoadDataIntoDataGridView();
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Lỗi khi xóa sản phẩm: " + ex.Message);
-                    }
-                }
-            }
-            else
+            if (string.IsNullOrEmpty(selectedProductId))
             {
                 MessageBox.Show("Vui lòng chọn một sản phẩm để xóa.");
+                return;
+            }
+
+            string tenSP = txtTenSP.Text;
+
+            // Kiểm tra xem sản phẩm có tồn tại trong các hóa đơn không
+            string checkQuery = @"
+        SELECT COUNT(*) 
+        FROM ChiTietHoaDonBan 
+        WHERE MaHang = @MaHang
+        UNION ALL
+        SELECT COUNT(*)
+        FROM ChiTietHoaDonNhap 
+        WHERE MaHang = @MaHang";
+
+            SqlParameter[] checkParameters = new SqlParameter[]
+            {
+        new SqlParameter("@MaHang", selectedProductId)
+            };
+
+            int relatedRecords = 0;
+            try
+            {
+                DataTable checkResult = DatabaseManager.Instance.ExecuteQuery(checkQuery, checkParameters);
+                foreach (DataRow row in checkResult.Rows)
+                {
+                    relatedRecords += Convert.ToInt32(row[0]);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi khi kiểm tra sản phẩm trong hóa đơn: " + ex.Message);
+                return;
+            }
+
+            if (relatedRecords > 0)
+            {
+                MessageBox.Show("Không thể xóa sản phẩm vì sản phẩm này có trong hóa đơn.");
+                return;
+            }
+
+            // Xác nhận xóa sản phẩm nếu không có trong hóa đơn
+            DialogResult result = MessageBox.Show($"Bạn có chắc chắn muốn xóa sản phẩm: {tenSP}?", "Xác nhận xóa", MessageBoxButtons.YesNo);
+            if (result == DialogResult.Yes)
+            {
+                string deleteQuery = "DELETE FROM DMHangHoa WHERE MaHang = @MaHang";
+                try
+                {
+                    SqlParameter[] deleteParameters = new SqlParameter[]
+                    {
+                new SqlParameter("@MaHang", selectedProductId)
+                    };
+                    DatabaseManager.Instance.ExecuteNonQuery(deleteQuery, deleteParameters);
+                    MessageBox.Show("Xóa sản phẩm thành công.");
+                    selectedProductId = null; // Reset lại selectedProductId sau khi xóa
+                    LoadDataIntoDataGridView();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi khi xóa sản phẩm: " + ex.Message);
+                }
             }
         }
+
+
 
         private void gunaBtnSua_Click(object sender, EventArgs e)
         {
@@ -394,24 +434,23 @@ LEFT JOIN NuocSX ON DMHangHoa.MaNuocSX = NuocSX.MaNuocSX
 
         private void gunaBtnChitiet_Click(object sender, EventArgs e)
         {
-            if (dataGridView1.SelectedRows.Count > 0)
+            if (string.IsNullOrEmpty(selectedProductId))
             {
-                string maHang = dataGridView1.SelectedRows[0].Cells["MaHang"].Value.ToString();
-                MenuForm menuForm = this.ParentForm as MenuForm;
-                if (menuForm != null)
-                {
-                    menuForm.ShowProductDetails(maHang);
-                }
-                else
-                {
-                    MessageBox.Show("Không thể tìm thấy MenuForm.");
-                }
+                MessageBox.Show("Vui lòng chọn một sản phẩm.");
+                return;
+            }
+
+            MenuForm menuForm = this.ParentForm as MenuForm;
+            if (menuForm != null)
+            {
+                menuForm.ShowProductDetails(selectedProductId); // Gửi `selectedProductId` đã chọn đến form chi tiết
             }
             else
             {
-                MessageBox.Show("Vui lòng chọn một sản phẩm.");
+                MessageBox.Show("Không thể tìm thấy MenuForm.");
             }
         }
+
 
     }
 }

@@ -13,11 +13,14 @@ namespace tablechair.UserControll
         private readonly DataBaseHelper databaseHelper = new DataBaseHelper();
         private MenuForm parentForm;
         private string maHang;
+        private ProductControll productControl;
+        private string imagePath;
 
-        public ChitietSanPham(MenuForm parent, string maHang)
+        public ChitietSanPham(MenuForm parent, ProductControll productControl, string maHang)
         {
             InitializeComponent();
             parentForm = parent;
+            this.productControl = productControl; // Lưu đối tượng ProductControll vào biến thành viên
             this.maHang = maHang;
             InitializeControls();
             LoadProductDetails();
@@ -131,18 +134,16 @@ namespace tablechair.UserControll
 
         private void guna2Button2_Click(object sender, EventArgs e)
         {
+            if (productControl != null)
+            {
+                productControl.LoadDataIntoDataGridView();
+            }
+            else
+            {
+                MessageBox.Show("ProductControl chưa được khởi tạo.");
+            }
             parentForm.ShowSanPhamControl();
         }
-
-        private byte[] ImageToByteArray(Image image)
-        {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                image.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
-                return ms.ToArray();
-            }
-        }
-
 
         private void guna2Button1_Click(object sender, EventArgs e)
         {
@@ -158,6 +159,7 @@ namespace tablechair.UserControll
             decimal donGiaNhap, donGiaBan;
             int thoiGianBaoHanh;
             string ghiChu = txtGhichu.Text.Trim();
+            string currentImagePath = imagePath ?? ""; // Sử dụng đường dẫn ảnh đã chọn, nếu không có sẽ để chuỗi rỗng
 
             if (!int.TryParse(txtSoluong.Text.Trim(), out soLuong) ||
                 !decimal.TryParse(txtDongianhap.Text.Trim(), out donGiaNhap) ||
@@ -168,28 +170,28 @@ namespace tablechair.UserControll
                 return;
             }
 
-            byte[] imageBytes = null;
-            if (pictureboxanh.Image != null)
+            if (string.IsNullOrEmpty(chatLieu) || chatLieu == "Thêm chất liệu...")
             {
-                imageBytes = ImageToByteArray(pictureboxanh.Image);
+                MessageBox.Show("Vui lòng chọn chất liệu hợp lệ.");
+                return;
             }
 
             string query = @"
-        UPDATE DMHangHoa
-        SET TenHangHoa = @TenHangHoa,
-            MaChatLieu = (SELECT MaChatLieu FROM ChatLieu WHERE TenChatLieu = @ChatLieu),
-            MaNuocSX = (SELECT MaNuocSX FROM NuocSX WHERE TenNuocSX = @NuocSanXuat),
-            MaKichThuoc = (SELECT MaKichThuoc FROM KichThuoc WHERE TenKichThuoc = @KichThuoc),
-            MaDacDiem = (SELECT MaDacDiem FROM DacDiem WHERE TenDacDiem = @DacDiem),
-            MaMau = (SELECT MaMau FROM MauSac WHERE TenMau = @Mau),
-            CongDung = @CongDung,
-            SoLuong = @SoLuong,
-            DonGiaNhap = @DonGiaNhap,
-            DonGiaBan = @DonGiaBan,
-            ThoiGianBaoHanh = @ThoiGianBaoHanh,
-            GhiChu = @GhiChu,
-            Anh = @Anh
-        WHERE MaHang = @MaHang";
+    UPDATE DMHangHoa
+    SET TenHangHoa = @TenHangHoa,
+        MaChatLieu = (SELECT MaChatLieu FROM ChatLieu WHERE TenChatLieu = @ChatLieu),
+        MaNuocSX = (SELECT MaNuocSX FROM NuocSX WHERE TenNuocSX = @NuocSanXuat),
+        MaKichThuoc = (SELECT MaKichThuoc FROM KichThuoc WHERE TenKichThuoc = @KichThuoc),
+        MaDacDiem = (SELECT MaDacDiem FROM DacDiem WHERE TenDacDiem = @DacDiem),
+        MaMau = (SELECT MaMau FROM MauSac WHERE TenMau = @Mau),
+        CongDung = @CongDung,
+        SoLuong = @SoLuong,
+        DonGiaNhap = @DonGiaNhap,
+        DonGiaBan = @DonGiaBan,
+        ThoiGianBaoHanh = @ThoiGianBaoHanh,
+        GhiChu = @GhiChu,
+        Anh = @Anh
+    WHERE MaHang = @MaHang";
 
             SqlParameter[] parameters = {
         new SqlParameter("@MaHang", maHang),
@@ -205,7 +207,7 @@ namespace tablechair.UserControll
         new SqlParameter("@DonGiaBan", donGiaBan),
         new SqlParameter("@ThoiGianBaoHanh", thoiGianBaoHanh),
         new SqlParameter("@GhiChu", ghiChu),
-        new SqlParameter("@Anh", imageBytes ?? (object)DBNull.Value) // Use byte array or NULL if no image
+        new SqlParameter("@Anh", currentImagePath)
     };
 
             try
@@ -214,6 +216,7 @@ namespace tablechair.UserControll
                 if (rowsAffected > 0)
                 {
                     MessageBox.Show("Cập nhật sản phẩm thành công!");
+                    productControl.LoadDataIntoDataGridView();
                 }
                 else
                 {
@@ -237,8 +240,11 @@ namespace tablechair.UserControll
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     pictureboxanh.Image = Image.FromFile(openFileDialog.FileName);
+                    imagePath = openFileDialog.FileName;
                 }
             }
         }
+
+
     }
 }

@@ -34,7 +34,7 @@ namespace tablechair
 
         public void ShowProductDetails(string maHang)
         {
-            var chitietSanPham = new ChitietSanPham(this, maHang); 
+            var chitietSanPham = new ChitietSanPham(this, productControll, maHang);
             ShowControl(chitietSanPham);
         }
 
