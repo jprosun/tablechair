@@ -245,6 +245,9 @@ namespace tablechair.UserControll
             }
         }
 
+        private void pictureboxanh_Click(object sender, EventArgs e)
+        {
 
+        }
     }
 }

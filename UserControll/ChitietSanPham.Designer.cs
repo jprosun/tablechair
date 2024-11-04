@@ -229,6 +229,7 @@
             this.pictureboxanh.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureboxanh.TabIndex = 17;
             this.pictureboxanh.TabStop = false;
+            this.pictureboxanh.Click += new System.EventHandler(this.pictureboxanh_Click);
             // 
             // guna2HtmlLabel16
             // 
