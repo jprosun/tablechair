@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Windows.Forms;
 
 public class DatabaseManager
 {
     private static DatabaseManager instance;
-    private readonly string connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\Admin\\source\\repos\\tablechair\\Database.mdf;Integrated Security=True";
+    private readonly string connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=" + Directory.GetCurrentDirectory() + "\\Database.mdf;Integrated Security=True";
 
     private DatabaseManager() { }
 

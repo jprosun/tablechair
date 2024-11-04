@@ -130,7 +130,7 @@ namespace tablechair
         private void guna2Button2_Click(object sender, EventArgs e)
         {
             this.Hide();
-            Form1 form = new Form1();
+            LoginForm form = new LoginForm();
             form.Show();
         }
 
