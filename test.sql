@@ -1,0 +1,1 @@
+﻿delete from Loai where TenLoai = 'bong'
