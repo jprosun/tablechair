@@ -60,6 +60,9 @@
     <Reference Include="FontAwesome.Sharp, Version=6.6.0.0, Culture=neutral, PublicKeyToken=d16d1e4e568ec10f, processorArchitecture=MSIL">
       <HintPath>packages\FontAwesome.Sharp.6.6.0\lib\net48\FontAwesome.Sharp.dll</HintPath>
     </Reference>
+    <Reference Include="Guna.Charts.WinForms, Version=1.0.9.0, Culture=neutral, PublicKeyToken=8b9d14aa5142e261, processorArchitecture=MSIL">
+      <HintPath>packages\Guna.Charts.WinForms.1.0.9\lib\net48\Guna.Charts.WinForms.dll</HintPath>
+    </Reference>
     <Reference Include="Guna.UI2, Version=2.0.4.6, Culture=neutral, PublicKeyToken=8b9d14aa5142e261, processorArchitecture=MSIL">
       <HintPath>packages\Guna.UI2.WinForms.2.0.4.6\lib\net48\Guna.UI2.dll</HintPath>
     </Reference>
@@ -112,6 +115,12 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UserControll\HomePage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControll\HomePage.Designer.cs">
+      <DependentUpon>HomePage.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\AddChatLieuForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -129,11 +138,11 @@
     </Compile>
     <Compile Include="DataBaseHelper.cs" />
     <Compile Include="DatabaseManager.cs" />
-    <Compile Include="View\Form1.cs">
+    <Compile Include="View\LoginForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="View\Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="View\LoginForm.Designer.cs">
+      <DependentUpon>LoginForm.cs</DependentUpon>
     </Compile>
     <Compile Include="View\MenuForm.cs">
       <SubType>Form</SubType>
@@ -200,8 +209,8 @@
     <EmbeddedResource Include="Controll.resx">
       <DependentUpon>Controll.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="View\Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <EmbeddedResource Include="View\LoginForm.resx">
+      <DependentUpon>LoginForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\MenuForm.resx">
       <DependentUpon>MenuForm.cs</DependentUpon>
@@ -286,6 +295,36 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <DependentUpon>Database.mdf</DependentUpon>
     </Content>
+    <None Include="Resources\tb.JPG" />
+    <None Include="Resources\sky1.jpg" />
+    <None Include="Resources\sky.jpg" />
+    <None Include="Resources\Picture11.jpg" />
+    <None Include="Resources\mac-os.png" />
+    <None Include="Resources\laptop.png" />
+    <None Include="Resources\icons8_settings_52px.png" />
+    <None Include="Resources\icons8-product-white-50.png" />
+    <None Include="Resources\icons8-product-gray-50.png" />
+    <None Include="Resources\icons8-product-black50.png" />
+    <None Include="Resources\icons8_notification_52px.png" />
+    <None Include="Resources\icons8_music_folder_52px_1.png" />
+    <None Include="Resources\icons8_music_folder_52px.png" />
+    <None Include="Resources\icons8_exit_52px_1.png" />
+    <None Include="Resources\icons8-employee white-50.png" />
+    <None Include="Resources\icons8-employee-black-50.png" />
+    <None Include="Resources\icons8_dog_house_52px_1.png" />
+    <None Include="Resources\icons8_dog_house_52px.png" />
+    <None Include="Resources\icons8-customer-white-48.png" />
+    <None Include="Resources\icons8-customer-black-48.png" />
+    <None Include="Resources\icons8_combo_chart_52px_1.png" />
+    <None Include="Resources\icons8_combo_chart_52px.png" />
+    <None Include="Resources\icons8_capital_52px_1.png" />
+    <None Include="Resources\icons8_capital_52px.png" />
+    <None Include="Resources\icons8-bill-white-30.png" />
+    <None Include="Resources\icons8-bill-gray-30.png" />
+    <None Include="Resources\icons8-bill-black-30.png" />
+    <None Include="Resources\ic_user.png" />
+    <None Include="Resources\effect.png" />
+    <None Include="Resources\chair1.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

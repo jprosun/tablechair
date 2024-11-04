@@ -6,9 +6,9 @@ using System.Windows.Forms;
 
 namespace tablechair
 {
-    public partial class Form1 : Controll
+    public partial class LoginForm : Controll
     {
-        public Form1()
+        public LoginForm()
         {
             InitializeComponent();
             txtPass.UseSystemPasswordChar = true;
