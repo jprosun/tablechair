@@ -13,22 +13,19 @@ namespace tablechair.UserControll
         public KhachHang(MenuForm parent)
         {
             InitializeComponent();
-            parentForm = parent ?? throw new ArgumentNullException(nameof(parent)); // Kiểm tra xem parent có null không
+            parentForm = parent ?? throw new ArgumentNullException(nameof(parent)); 
             InitializeCustomerDataGridView();
             LoadCustomerDataIntoDataGridView();
         }
 
         private void InitializeCustomerDataGridView()
         {
-            dgvCustomer.ColumnCount = 8; // Tăng số lượng cột lên 8
+            dgvCustomer.ColumnCount = 5;
             dgvCustomer.Columns[0].Name = "Mã Khách";
             dgvCustomer.Columns[1].Name = "Tên Khách";
             dgvCustomer.Columns[2].Name = "Địa Chỉ";
             dgvCustomer.Columns[3].Name = "Điện Thoại";
-            dgvCustomer.Columns[4].Name = "Số HDB";
-            dgvCustomer.Columns[5].Name = "Mã Hàng";
-            dgvCustomer.Columns[6].Name = "Số Lượng";
-            dgvCustomer.Columns[7].Name = "Thành Tiền";
+            dgvCustomer.Columns[4].Name = "Tổng Tiền đã Chi Trả";
 
             DataGridViewButtonColumn buttonColumn = new DataGridViewButtonColumn();
             buttonColumn.HeaderText = "Chi tiết";
@@ -36,6 +33,7 @@ namespace tablechair.UserControll
             buttonColumn.Text = "Xem Chi tiết";
             buttonColumn.UseColumnTextForButtonValue = true;
             dgvCustomer.Columns.Add(buttonColumn);
+
             dgvCustomer.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvCustomer.ReadOnly = true;
         }
@@ -62,37 +60,31 @@ namespace tablechair.UserControll
         {
             dgvCustomer.Rows.Clear();
             string query = @"
-                SELECT 
-                    KhachHang.MaKhach,
-                    KhachHang.TenKhach,
-                    KhachHang.DiaChi,
-                    KhachHang.DienThoai,
-                    HoaDonBan.SoHDB,
-                    ChiTietHoaDonBan.MaHang,
-                    ChiTietHoaDonBan.SoLuong,
-                    ChiTietHoaDonBan.ThanhTien
-                FROM KhachHang
-                LEFT JOIN HoaDonBan ON KhachHang.MaKhach = HoaDonBan.MaKhach
-                LEFT JOIN ChiTietHoaDonBan ON HoaDonBan.SoHDB = ChiTietHoaDonBan.SoHDB";
+        SELECT 
+            KhachHang.MaKhach,
+            KhachHang.TenKhach,
+            KhachHang.DiaChi,
+            KhachHang.DienThoai,
+            SUM(ChiTietHoaDonBan.ThanhTien) AS TongTien
+        FROM KhachHang
+        LEFT JOIN HoaDonBan ON KhachHang.MaKhach = HoaDonBan.MaKhach
+        LEFT JOIN ChiTietHoaDonBan ON HoaDonBan.SoHDB = ChiTietHoaDonBan.SoHDB
+        GROUP BY KhachHang.MaKhach, KhachHang.TenKhach, KhachHang.DiaChi, KhachHang.DienThoai";
 
             try
             {
-                DataTable result = DatabaseManager.Instance.ExecuteQuery(query); // Thực hiện truy vấn
-
+                DataTable result = DatabaseManager.Instance.ExecuteQuery(query);
                 if (result.Rows.Count > 0)
                 {
                     foreach (DataRow row in result.Rows)
                     {
                         string[] dataRow = new string[]
                         {
-                            row["MaKhach"].ToString(),
-                            row["TenKhach"].ToString(),
-                            row["DiaChi"].ToString(),
-                            row["DienThoai"].ToString(),
-                            row["SoHDB"] != DBNull.Value ? row["SoHDB"].ToString() : "N/A",
-                            row["MaHang"] != DBNull.Value ? row["MaHang"].ToString() : "N/A",
-                            row["SoLuong"] != DBNull.Value ? row["SoLuong"].ToString() : "0",
-                            row["ThanhTien"] != DBNull.Value ? row["ThanhTien"].ToString() : "0"
+                    row["MaKhach"].ToString(),
+                    row["TenKhach"].ToString(),
+                    row["DiaChi"].ToString(),
+                    row["DienThoai"].ToString(),
+                    row["TongTien"] != DBNull.Value ? row["TongTien"].ToString() : "0"
                         };
                         dgvCustomer.Rows.Add(dataRow);
                     }
@@ -108,7 +100,7 @@ namespace tablechair.UserControll
             }
         }
 
-        private void iconButton1_Click(object sender, EventArgs e)
+        private void iconButton1_Click_1(object sender, EventArgs e)
         {
             Excel.Application excelApp = new Excel.Application();
             excelApp.Workbooks.Add();

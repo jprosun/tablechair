@@ -105,5 +105,6 @@ namespace tablechair.UserControll
             parentForm.ShowKhachHangControl();
         }
 
+      
     }
 }
