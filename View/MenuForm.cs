@@ -91,17 +91,20 @@ namespace tablechair
         {
             moveEffect(sender);
             ShowControl(tongquanForm);
+            HomeLabel.Text = "Tổng quan";
         }
 
         private void EmployeeBtn_Click(object sender, EventArgs e)
         {
             moveEffect(sender);
+            HomeLabel.Text = "Danh sách nhân viên";
         }
 
         private void HomeBtn_Click(object sender, EventArgs e)
         {
             moveEffect(sender);
             ShowControl(homePage);
+            HomeLabel.Text = "Trang chủ";
         }
 
         private void UserIcon_Click(object sender, EventArgs e)
@@ -114,23 +117,27 @@ namespace tablechair
                     ((Guna2Button)item).Checked = false;
                 }
             }
+            HomeLabel.Text = "Thông tin cá nhân";
         }
 
         private void BillBtn_Click(object sender, EventArgs e)
         {
             moveEffect(sender);
+            HomeLabel.Text = "Hóa đơn";
         }
 
         private void ProductBtn_Click(object sender, EventArgs e)
         {
             ShowControl(productControll);
             moveEffect(sender);
+            HomeLabel.Text = "Danh sách sản phẩm";
         }
 
         private void CustomerBtn_Click(object sender, EventArgs e)
         {
             ShowControl(customerControll);
             moveEffect(sender);
+            HomeLabel.Text = "Danh sách khách hàng";
         }
 
         private void LogoutBtn_Click(object sender, EventArgs e)

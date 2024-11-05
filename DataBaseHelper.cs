@@ -292,6 +292,8 @@ namespace tablechair
             DatabaseManager.Instance.ExecuteNonQuery(query, parameters);
         }
 
+
+
     }
 }
 

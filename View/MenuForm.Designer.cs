@@ -345,7 +345,7 @@
             this.HomeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.HomeLabel.Location = new System.Drawing.Point(26, 14);
             this.HomeLabel.Name = "HomeLabel";
-            this.HomeLabel.Size = new System.Drawing.Size(106, 37);
+            this.HomeLabel.Size = new System.Drawing.Size(710, 37);
             this.HomeLabel.TabIndex = 2;
             this.HomeLabel.Text = "Home";
             // 
