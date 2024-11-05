@@ -20,7 +20,15 @@ namespace tablechair.UserControll
 
         private void HomePage_Load(object sender, EventArgs e)
         {
+            NameLb.Text = "Mai Việt Hùng";
+            IDLb.Text = "B1809276";
+            JobLb.Text = "Quản lý";
 
+            //int monthInvoice = ;
+
+            MonthInvoiceLb.Text = 30000000.ToString("N0") + " VND";
+            BillTodayLb.Text = "10";
+            ProductLb.Text = "100";
         }
     }
 }
